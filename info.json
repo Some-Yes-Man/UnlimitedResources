@@ -1,0 +1,10 @@
+{
+  "name": "Unlimited-Resources-Oil-Refresh",
+  "version": "0.1.1",
+  "factorio_version": "1.0",
+  "title": "Unlimited Resources (Oil Refresh)",
+  "author": "Yes-Man",
+  "homepage": "",
+  "license": "MIT",
+  "description": "Ore deposits get refreshed when emptied. Oil will be refreshed based on a timer. This is based on the 'Unlimited Resources' mod from Barry."
+}
