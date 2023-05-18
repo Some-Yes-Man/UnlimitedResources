@@ -1,7 +1,9 @@
 local firstRefill = false;
-local refillAmount = settings.global["resource-refill-amount-ore"].value;
-local refillAmountOil = settings.global["resource-refill-amount-oil"].value * 3000; -- percentage times 3000
-local refillInterval = settings.global["resource-refill-interval-oil"].value * 60; -- ticks (18000 = 5min)
+local refillOreEnabled = settings.global["resource-refill-ore-enabled"].value;
+local refillOreAmount = settings.global["resource-refill-amount-ore"].value;
+local refillOilEnabled = settings.global["resource-refill-oil-enabled"].value;
+local refillOilAmount = settings.global["resource-refill-amount-oil"].value * 3000; -- percentage times 3000
+local refillOilInterval = settings.global["resource-refill-interval-oil"].value * 60; -- ticks (18000 = 5min)
 
 function _log(...)
   log(serpent.block(..., {comment = false}))
@@ -14,9 +16,13 @@ end);
 function refillResources(resources)
   for _, entity in pairs(resources) do
     if entity.name == "crude-oil" then
-      entity.amount = refillAmountOil;
+      if refillOilEnabled then
+        entity.amount = refillOilAmount;
+      end
     else
-      entity.amount = refillAmount;
+      if refillOreEnabled then
+        entity.amount = refillOreAmount;
+      end
     end
   end
 end
@@ -41,7 +47,7 @@ function onTick(event)
   if firstRefill then
     firstRefill = false;
     refillAllResources();
-  elseif event.tick % refillInterval == 0 then
+  elseif event.tick % refillOilInterval == 0 then
     refillOilResources();
   end
 end
@@ -55,16 +61,22 @@ end
 
 function onResourceDepleted(event)
   if event.entity.name == "crude-oil" then
-    event.entity.amount = refillAmountOil;
+    if refillOilEnabled then
+      event.entity.amount = refillOilAmount;
+    end
   else
-    event.entity.amount = refillAmount;
+    if refillOreEnabled then
+      event.entity.amount = refillOreAmount;
+    end
   end
 end
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-  refillAmount = settings.global["resource-refill-amount-ore"].value;
-  refillAmountOil = settings.global["resource-refill-amount-oil"].value * 3000;
-  refillInterval = settings.global["resource-refill-interval-oil"].value * 60;
+  refillOreEnabled = settings.global["resource-refill-ore-enabled"].value;
+  refillOreAmount = settings.global["resource-refill-amount-ore"].value;
+  refillOilEnabled = settings.global["resource-refill-oil-enabled"].value;
+  refillOilAmount = settings.global["resource-refill-amount-oil"].value * 3000;
+  refillOilInterval = settings.global["resource-refill-interval-oil"].value * 60;
 end)
 
 -- Increase resource amount when generated
